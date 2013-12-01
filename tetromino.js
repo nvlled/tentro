@@ -103,6 +103,8 @@ Transformer.prototype = {
     getCoordinates: function(pos) {
         var index = this.index,
             functions = this.permutators[index];
+
+        // TODO: cache result
         return functions.map(function(fn) {
             return fn(pos);
         });
