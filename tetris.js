@@ -2,13 +2,23 @@
 window.onload = load;
 
 var worldW = 15,
-    worldH = 20,
+    worldH = 21,
 
     spacing = 2, // pixels
     blockSize = 20, // pixels
     
     canvas,
     context;
+
+var blocks = [
+    new Tetro("t", {x: 4, y: 4}),
+    new Tetro("j", {x: 4, y: 10}),
+    new Tetro("l", {x: 4, y: 15}),
+    new Tetro("i", {x: 9, y: 3}),
+    new Tetro("z", {x: 9, y: 9}),
+    new Tetro("s", {x: 9, y: 14}),
+    new Tetro("o", {x: 6, y: 18}),
+]
 
 function load() {
     canvas = document.getElementsByTagName("canvas")[0];
@@ -25,9 +35,17 @@ function start() {
 }
 
 
+var frame = 0;
 function gameLoop() {
-    clearScreen();
+    if (frame % 20 == 0) {
+        clearScreen();
+        blocks.forEach(function(block) {
+            block.draw(context, drawBlock);
+            block.rotate();
+        });
 
+    }
+    frame++;
     mozRequestAnimationFrame(gameLoop);
 }
 
@@ -68,5 +86,6 @@ function toPixelPos(pos) {
         y: spacing + (spacing + blockSize) * pos.y,
     }
 }
+
 
 

@@ -59,16 +59,12 @@ var permutatorMap = {
     z: [
         [center, left, below, belowRight],
         [center, above, left, belowLeft],
-        [center, right, above, aboveLeft],
-        [center, below, right, aboveRight],
     ],
 
     //  **
     // ** 
     s: [
         [center, right, below, belowLeft],
-        [center, below, left, aboveLeft],
-        [center, left, above, aboveRight],
         [center, above, right, belowRight],
     ],
 }
@@ -79,6 +75,8 @@ var colors = {
     j: "yellow",
     o: "cyan",
     i: "red",
+    z: "orange",
+    s: "purple",
 }
 
 function Tetro(type, pos) {
