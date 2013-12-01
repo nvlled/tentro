@@ -9,6 +9,11 @@ var directions = [UP, RIGHT, DOWN, LEFT];
 // Not exactly the best (and correct) implementation,
 // but at least I tried some different approach.
 var permutatorMap = {
+
+    // I could programmatically define the permutation
+    // of each function too, but this is easier and 
+    // more flexible.
+
     // ***
     //  * 
     t: [
@@ -29,35 +34,43 @@ var permutatorMap = {
 
     // ***
     // *
-    l: {
-        up: [center, left, right, aboveRight],
-        right: [center, above, below, belowLeft],
-        down: [center, left, right, belowLeft],
-        left: [center, below, above, aboveLeft],
-    },
-
+    l: [
+        [center, left, right, aboveRight],
+        [center, above, below, belowLeft],
+        [center, left, right, belowLeft],
+        [center, below, above, aboveLeft],
+    ],
 
     //
     // ****
     //
-    i: {
-        up: [center, below, above, twice(above)],
-        right: [center, left, right, twice(right)],
-        down: [center, above, below, twice(below)],
-        left: [center, right, left, twice(left)],
-    },
+    i: [
+        [center, left, right, twice(right)],
+        [center, above, below, twice(below)],
+    ],
 
 
     // **
     // **
-    o: {
-        up: [center, right, below, belowRight],
-        right: [center, right, below, belowRight],
-        down: [center, right, below, belowRight],
-        left: [center, right, below, belowRight],
-    }
+    o: [[center, right, below, belowRight]],
 
-    // I forgot, there are s and z pieces too.
+    // **
+    //  **
+    z: [
+        [center, left, below, belowRight],
+        [center, above, left, belowLeft],
+        [center, right, above, aboveLeft],
+        [center, below, right, aboveRight],
+    ],
+
+    //  **
+    // ** 
+    s: [
+        [center, right, below, belowLeft],
+        [center, below, left, aboveLeft],
+        [center, left, above, aboveRight],
+        [center, above, right, belowRight],
+    ],
 }
 
 var colors = {
@@ -68,7 +81,6 @@ var colors = {
     i: "red",
 }
 
-//function Tetro(blockType, direction, pos) {
 function Tetro(type, pos) {
     //this.blockType = blockType;
     this.color = colors[type];
