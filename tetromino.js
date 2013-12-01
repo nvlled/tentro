@@ -1,7 +1,4 @@
 
-
-tentro
-
 var UP = "up",
     RIGHT = "right",
     DOWN = "down",
@@ -11,24 +8,24 @@ var directions = [UP, RIGHT, DOWN, LEFT];
 
 // Not exactly the best (and correct) implementation,
 // but at least I tried some different approach.
-var coordinates = {
+var permutatorMap = {
     // ***
     //  * 
-    t: {
-        up: [center, left, above, right],
-        right: [center, left, above, below],
-        down: [center, left, right, below],
-        left: [center, below, above, left],
-    },
+    t: [
+        [center, left, above, right],
+        [center, left, above, below],
+        [center, left, right, below],
+        [center, below, above, right],
+    ],
 
     // ***
     //   *
-    j: {
-        up: [center, left, right, aboveLeft],
-        right: [center, above, below, aboveRight],
-        down: [center, left, right, belowRight],
-        left: [center, above, below, belowLeft],
-    },
+    j: [
+        [center, left, right, aboveLeft],
+        [center, above, below, aboveRight],
+        [center, left, right, belowRight],
+        [center, above, below, belowLeft],
+    ],
 
     // ***
     // *
@@ -71,23 +68,51 @@ var colors = {
     i: "red",
 }
 
-function Tetromino(blockType, direction, pos) {
-    this.blockType = blockType;
-    this.color = colors[blockType];
-    this.direction = direction || UP;
+//function Tetro(blockType, direction, pos) {
+function Tetro(type, pos) {
+    //this.blockType = blockType;
+    this.color = colors[type];
     this.pos = pos || {x: 0, y: 0};
+
+    var permutators = permutatorMap[type];
+    this.transformer = new Transformer(permutators);
 }
 
-Tetromino.prototype = {
+Tetro.prototype = {
+    draw: function(ctx, drawFn) {
+        var transformer = this.transformer,
+            coords = transformer.getCoordinates(this.pos),
+            color = this.color;
+
+        coords.forEach(function(pos) {
+            drawFn(ctx, pos, color);
+        });
+    },
+    rotate: function() {
+        this.transformer = this.transformer.rotate();
+    }
 }
 
-function getCoordinates(blockType, direction, pos) {
-    var functions = coordinates[blockType][direction];
-    return functions.map(function(fn) {
-        return fn(pos);
-    });
+function Transformer(permutators, index) {
+    this.index = index || 0;
+    this.permutators = permutators || 
+        [center, center, center, center];
 }
 
+Transformer.prototype = {
+    getCoordinates: function(pos) {
+        var index = this.index,
+            functions = this.permutators[index];
+        return functions.map(function(fn) {
+            return fn(pos);
+        });
+    },
+    rotate: function() {
+        var len = this.permutators.length,
+            index = this.index;
+        return new Transformer(this.permutators, (index + 1) % len); 
+    }
+}
 
 function comp(f, g) {
     return function(x) {
