@@ -28,6 +28,8 @@ var activePiece = null,
 
 
 function load() {
+    handleKeyboard();
+
     initCanvas();
     initWorld();
 
@@ -79,32 +81,34 @@ function start() {
 
 var frame = 0;
 function gameLoop() {
-    if (frame % 20 == 0) {
+    update(frame);
+    draw();
 
-        update();
-        draw();
-
-    }
     frame++;
     mozRequestAnimationFrame(gameLoop);
 }
 
-function update() {
+function update(frame) {
     // rotate sample blocks
-    sampleBlocks = sampleBlocks.map(function(block) {
-        return block.rotate();
-    });
 
-    if (rotatePiece) {
-        var rotatedPiece = activePiece.rotate();
-        if ( ! inCollision(rotatedPiece)) {
-            activePiece = rotatedPiece;
-        }
+    if (frame % 10 == 0) {
+        sampleBlocks = sampleBlocks.map(function(block) {
+            return block.rotate();
+        });
     }
 
-    if (xMovement != 0) {
-        var movedPiece = activePiece.move(xMovement, 0);
-        activePiece = movedPiece;
+    if (frame % 5 == 0) {
+        if (rotatePiece) {
+            var rotatedPiece = activePiece.rotate();
+            //if ( ! inCollision(rotatedPiece)) {
+                activePiece = rotatedPiece;
+            //}
+        }
+
+        if (xMovement != 0) {
+            var movedPiece = activePiece.move(xMovement, 0);
+            activePiece = movedPiece;
+        }
     }
 }
 
@@ -174,3 +178,28 @@ function tetroGenerator(pos) {
 
     return new Tetro(type, pos);
 }
+
+function handleKeyboard() {
+    window.onkeydown = function(e) {
+        console.log("keycode -> " + e.keyCode);
+        if (e.keyCode == 37) {
+            xMovement = -1;
+        } else if (e.keyCode == 39) {
+            xMovement =  1;
+        }
+
+        if (e.keyCode == 32) {
+            rotatePiece = true;
+        }
+    }
+    window.onkeyup = function(e) {
+        //console.log("keycode -> " + e.keyCode);
+        if (e.keyCode == 37 || e.keyCode == 39) {
+            xMovement = 0;
+        } else if (e.keyCode == 32) {
+            rotatePiece = false;
+        }
+    }
+}
+
+
