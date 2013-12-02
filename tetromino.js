@@ -4,6 +4,8 @@ var UP = "up",
     DOWN = "down",
     LEFT = "left";
 
+var typeNames = ["t", "j", "i", "o", "s", "z"];
+
 var directions = [UP, RIGHT, DOWN, LEFT];
 
 // Not exactly the best (and correct) implementation,
@@ -79,13 +81,14 @@ var colors = {
     s: "purple",
 }
 
-function Tetro(type, pos) {
-    //this.blockType = blockType;
+function Tetro(type, pos, transformer) {
+    this.type = type;
     this.color = colors[type];
     this.pos = pos || {x: 0, y: 0};
 
     var permutators = permutatorMap[type];
-    this.transformer = new Transformer(permutators);
+    this.transformer = transformer ||
+        new Transformer(permutators);
 }
 
 Tetro.prototype = {
@@ -98,8 +101,26 @@ Tetro.prototype = {
             drawFn(ctx, pos, color);
         });
     },
+    
     rotate: function() {
-        this.transformer = this.transformer.rotate();
+        var rotated = this.transformer.rotate();
+        return new Tetro(this.type, this.pos, rotated);
+    },
+
+    move: function(dx, dy) {
+        var pos = addPos(this.pos, dx, dy);
+        return new Tetro(this.type, pos, this.transformer);
+    },
+
+    moveLeft: function() {
+        return this.move(-1, 0);
+    },
+    moveRight: function() {
+        return this.move( 1, 0);
+    },
+
+    getBlocks: function() {
+        return this.transformer.getCoordinates(this.pos);
     }
 }
 
@@ -141,7 +162,7 @@ function rotate(dir) {
     return directions[(i+1) % 4];
 }
 
-function add(pos, dx, dy) {
+function addPos(pos, dx, dy) {
     return {
         x: pos.x + dx,
         y: pos.y + dy
@@ -153,19 +174,19 @@ function center(pos) {
 }
 
 function left(pos) {
-    return add(pos, -1, 0);
+    return addPos(pos, -1, 0);
 }
 
 function below(pos) {
-    return add(pos, 0, 1);
+    return addPos(pos, 0, 1);
 }
 
 function right(pos) {
-    return add(pos, 1, 0);
+    return addPos(pos, 1, 0);
 }
 
 function above(pos) {
-    return add(pos, 0, -1);
+    return addPos(pos, 0, -1);
 }
 
 function aboveLeft(pos) {
