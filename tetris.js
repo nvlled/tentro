@@ -21,6 +21,11 @@ var sampleBlocks = [
     new Tetro("s", {x: 9, y: 14}),
 ];
 
+var activePiece = null,
+    rotatePiece = false,
+    xMovement = 0,
+    yMovement = 0;
+
 
 function load() {
     initCanvas();
@@ -63,6 +68,11 @@ function drawWorld() {
 }
 
 function start() {
+    activePiece = tetroGenerator(
+            {x: Number.toInteger(worldW / 2),
+             y: worldH - 3});
+
+    activePiece.color = "white";
     mozRequestAnimationFrame(gameLoop);
 }
 
@@ -84,12 +94,28 @@ function update() {
     sampleBlocks = sampleBlocks.map(function(block) {
         return block.rotate();
     });
+
+    if (rotatePiece) {
+        var rotatedPiece = activePiece.rotate();
+        if ( ! inCollision(rotatedPiece)) {
+            activePiece = rotatedPiece;
+        }
+    }
+
+    if (xMovement != 0) {
+        var movedPiece = activePiece.move(xMovement, 0);
+        activePiece = movedPiece;
+    }
 }
 
 function draw() {
     clearScreen();
     drawWorld();
     renderSampleBlocks();
+
+    if (activePiece) {
+        activePiece.draw(context, drawBlock);
+    }
 }
 
 function renderSampleBlocks() {
@@ -140,4 +166,11 @@ function addToWorld(piece) {
     piece.getBlocks().forEach(function(block) {
         world[block.y][block.x] = piece.color;
     });
+}
+
+function tetroGenerator(pos) {
+    var index = Number.toInteger(Math.random() * typeNames.length),
+        type = typeNames[index];
+
+    return new Tetro(type, pos);
 }
