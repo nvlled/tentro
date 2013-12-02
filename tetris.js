@@ -1,33 +1,65 @@
 
 window.onload = load;
 
-var worldW = 15,
+var worldW = 17,
     worldH = 21,
 
-    spacing = 2, // pixels
+    spacing = 3, // pixels
     blockSize = 20, // pixels
     
     canvas,
     context;
 
-var blocks = [
+var world;
+
+var sampleBlocks = [
     new Tetro("t", {x: 4, y: 4}),
     new Tetro("j", {x: 4, y: 10}),
     new Tetro("l", {x: 4, y: 15}),
     new Tetro("i", {x: 9, y: 3}),
     new Tetro("z", {x: 9, y: 9}),
     new Tetro("s", {x: 9, y: 14}),
-    new Tetro("o", {x: 6, y: 18}),
-]
+];
+
 
 function load() {
+    initCanvas();
+    initWorld();
+
+    start();
+}
+
+function initCanvas() {
     canvas = document.getElementsByTagName("canvas")[0];
     context = canvas.getContext("2d");
 
     canvas.width = worldW * (blockSize + spacing) + spacing;
     canvas.height = worldH * (blockSize + spacing) + spacing;
+}
 
-    start();
+function initWorld() {
+    world = [];
+
+    for (var y = 0; y < worldH; y++) {
+        world[y] = new Array(worldW);
+    }
+
+    addToWorld(new Tetro("i", {x: 1, y: 0}));
+    addToWorld(new Tetro("i", {x: 5, y: 0}));
+    addToWorld(new Tetro("t", {x: 1, y: 1})
+            .rotate()
+            .rotate());
+}
+
+function drawWorld() {
+    for (var y = 0; y < worldH; y++) {
+        for (var x = 0; x < worldW; x++) {
+            var color = world[y][x];
+            if (color) {
+                drawBlock(context, {x: x, y: y}, color);
+            }
+        }
+    }
 }
 
 function start() {
@@ -38,15 +70,32 @@ function start() {
 var frame = 0;
 function gameLoop() {
     if (frame % 20 == 0) {
-        clearScreen();
-        blocks.forEach(function(block) {
-            block.draw(context, drawBlock);
-            block.rotate();
-        });
+
+        update();
+        draw();
 
     }
     frame++;
     mozRequestAnimationFrame(gameLoop);
+}
+
+function update() {
+    // rotate sample blocks
+    sampleBlocks = sampleBlocks.map(function(block) {
+        return block.rotate();
+    });
+}
+
+function draw() {
+    clearScreen();
+    drawWorld();
+    renderSampleBlocks();
+}
+
+function renderSampleBlocks() {
+    sampleBlocks.forEach(function(block) {
+        block.draw(context, drawBlock);
+    });
 }
 
 function huh() {
@@ -87,5 +136,8 @@ function toPixelPos(pos) {
     }
 }
 
-
-
+function addToWorld(piece) {
+    piece.getBlocks().forEach(function(block) {
+        world[block.y][block.x] = piece.color;
+    });
+}
