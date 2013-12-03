@@ -100,14 +100,22 @@ function update(frame) {
     if (frame % 5 == 0) {
         if (rotatePiece) {
             var rotatedPiece = activePiece.rotate();
-            //if ( ! inCollision(rotatedPiece)) {
+            if ( ! inCollision(rotatedPiece)) {
                 activePiece = rotatedPiece;
-            //}
+            }
         }
 
         if (xMovement != 0) {
             var movedPiece = activePiece.move(xMovement, 0);
-            activePiece = movedPiece;
+            if ( ! inCollision(movedPiece)) {
+                activePiece = movedPiece;
+            }
+        }
+        if (yMovement != 0) {
+            var movedPiece = activePiece.move(0, yMovement);
+            if ( ! inCollision(movedPiece)) {
+                activePiece = movedPiece;
+            }
         }
     }
 }
@@ -188,6 +196,10 @@ function handleKeyboard() {
             xMovement =  1;
         }
 
+        if (e.keyCode == 38) {
+            yMovement = -1;
+        }
+
         if (e.keyCode == 32) {
             rotatePiece = true;
         }
@@ -198,8 +210,25 @@ function handleKeyboard() {
             xMovement = 0;
         } else if (e.keyCode == 32) {
             rotatePiece = false;
+        } else if (e.keyCode == 38) {
+            yMovement =  0;
         }
     }
+}
+
+function inCollision(piece) {
+    return piece.getBlocks()
+        .some(function(block) {
+            return outOfBounds(block) ||
+                !!world[block.y][block.x];
+        });
+}
+
+function outOfBounds(pos) {
+    return pos.x < 0 ||
+        pos.x >= worldW ||
+        pos.y < 0 ||
+        pos.y >= worldH;
 }
 
 
