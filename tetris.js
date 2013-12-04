@@ -12,7 +12,8 @@ var worldW = 17,
 
 var world,
     level = 0,
-    ySpeed = 1;
+    ySpeed = 1,
+    baseSpeed = 30;
 
 var sampleBlocks = [
     new Tetro("t", {x: 4, y: 4}),
@@ -26,7 +27,7 @@ var sampleBlocks = [
 var activePiece = null,
     rotatePiece = false,
     xMovement = 0,
-    yMovement = 0;
+    yMovement = -1;
 
 
 function load() {
@@ -116,14 +117,19 @@ function update(frame) {
                 activePiece = movedPiece;
             }
         }
-        if (yMovement != 0) {
-            var movedPiece = activePiece.move(0, yMovement);
-            if ( ! inCollision(movedPiece)) {
-                activePiece = movedPiece;
-            } else {
-                addToWorld(activePiece);
-                newActivePiece();
-            }
+    }
+
+    ascend(activePiece);
+}
+
+function ascend() {
+    if ((frame % (baseSpeed - ySpeed)) == 0) {
+        var movedPiece = activePiece.move(0, yMovement);
+        if ( ! inCollision(movedPiece)) {
+            activePiece = movedPiece;
+        } else {
+            addToWorld(activePiece);
+            newActivePiece();
         }
     }
 }
@@ -131,7 +137,7 @@ function update(frame) {
 function draw() {
     clearScreen();
     drawWorld();
-    renderSampleBlocks();
+    //renderSampleBlocks();
 
     if (activePiece) {
         activePiece.draw(context, drawBlock);
@@ -219,7 +225,7 @@ function handleKeyboard() {
         } else if (e.keyCode == 75) {
             rotatePiece = false;
         } else if (e.keyCode == 74) {
-            yMovement =  0;
+            //yMovement =  0;
         }
     }
 }
