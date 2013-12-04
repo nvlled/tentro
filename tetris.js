@@ -13,7 +13,7 @@ var worldW = 17,
 var world,
     level = 0,
     ySpeed = 1,
-    baseSpeed = 30;
+    baseSpeed = 20;
 
 var sampleBlocks = [
     new Tetro("t", {x: 4, y: 4}),
@@ -130,8 +130,16 @@ function ascend() {
         } else {
             addToWorld(activePiece);
             newActivePiece();
+
+            if (inCollision(activePiece)) {
+                endGame();
+            }
         }
     }
+}
+
+function endGame() {
+    initWorld();
 }
 
 function draw() {
