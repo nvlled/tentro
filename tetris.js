@@ -86,6 +86,19 @@ function newActivePiece() {
         : Number.toInteger(worldW / 2);
 
     activePiece = tetroGenerator({x: x, y: y});
+    adjustStartingPosition();
+}
+
+function adjustStartingPosition() {
+    var dx = 1;
+    if (activePiece.pos.x >= worldW / 2) {
+        dx *= -1;
+    }
+
+    while(inBorderCollision(activePiece)) {
+        console.log(activePiece.pos.x);
+        activePiece = activePiece.move(dx, 0);
+    }
 }
 
 
@@ -269,6 +282,10 @@ function inCollision(piece) {
             return outOfBounds(block) ||
                 !!world[block.y][block.x];
         });
+}
+
+function inBorderCollision(piece) {
+    return piece.getBlocks().some(outOfBounds);
 }
 
 function outOfBounds(pos) {
