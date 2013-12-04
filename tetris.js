@@ -10,7 +10,9 @@ var worldW = 17,
     canvas,
     context;
 
-var world;
+var world,
+    level = 0,
+    ySpeed = 1;
 
 var sampleBlocks = [
     new Tetro("t", {x: 4, y: 4}),
@@ -28,10 +30,9 @@ var activePiece = null,
 
 
 function load() {
-    handleKeyboard();
-
     initCanvas();
     initWorld();
+    handleKeyboard();
 
     start();
 }
@@ -70,17 +71,21 @@ function drawWorld() {
 }
 
 function start() {
+    newActivePiece();
+    activePiece.color = "white";
+
+    mozRequestAnimationFrame(gameLoop);
+}
+
+function newActivePiece() {
     activePiece = tetroGenerator(
             {x: Number.toInteger(worldW / 2),
-             y: worldH - 3});
-
-    activePiece.color = "white";
-    mozRequestAnimationFrame(gameLoop);
+                y: worldH - 3});
 }
 
 
 var frame = 0;
-function gameLoop() {
+function gameLoop(t) {
     update(frame);
     draw();
 
@@ -115,6 +120,9 @@ function update(frame) {
             var movedPiece = activePiece.move(0, yMovement);
             if ( ! inCollision(movedPiece)) {
                 activePiece = movedPiece;
+            } else {
+                addToWorld(activePiece);
+                newActivePiece();
             }
         }
     }
@@ -190,27 +198,27 @@ function tetroGenerator(pos) {
 function handleKeyboard() {
     window.onkeydown = function(e) {
         console.log("keycode -> " + e.keyCode);
-        if (e.keyCode == 37) {
+        if (e.keyCode == 72) {
             xMovement = -1;
-        } else if (e.keyCode == 39) {
+        } else if (e.keyCode == 76) {
             xMovement =  1;
         }
 
-        if (e.keyCode == 38) {
+        if (e.keyCode == 74) {
             yMovement = -1;
         }
 
-        if (e.keyCode == 32) {
+        if (e.keyCode == 75) {
             rotatePiece = true;
         }
     }
     window.onkeyup = function(e) {
         //console.log("keycode -> " + e.keyCode);
-        if (e.keyCode == 37 || e.keyCode == 39) {
+        if (e.keyCode == 72 || e.keyCode == 76) {
             xMovement = 0;
-        } else if (e.keyCode == 32) {
+        } else if (e.keyCode == 75) {
             rotatePiece = false;
-        } else if (e.keyCode == 38) {
+        } else if (e.keyCode == 74) {
             yMovement =  0;
         }
     }
@@ -230,5 +238,7 @@ function outOfBounds(pos) {
         pos.y < 0 ||
         pos.y >= worldH;
 }
+
+
 
 
