@@ -1,20 +1,31 @@
 
-var UP = "up",
-    RIGHT = "right",
-    DOWN = "down",
-    LEFT = "left";
-
+// I only used this for random generation of new tetrominos.
 var typeNames = ["t", "j", "i", "o", "s", "z"];
-
-var directions = [UP, RIGHT, DOWN, LEFT];
 
 // Not exactly the best (and correct) implementation,
 // but at least I tried some different approach.
 var permutatorMap = {
 
-    // I could programmatically define the permutation
-    // of each function too, but this is easier and 
-    // more flexible.
+    // Basically, tetromimos are represented
+    // only using a single position (x, y)
+    // and the list of list of functions
+    // for computing its block coordinates. 
+    // The single position acts as the pivot.
+    //
+    // By doing this, rotating and moving 
+    // the tetromino is quite efficient.
+    
+    // Sample tetromino:
+    c: [
+    //             * <---(above)
+    // (center)--> ** <---(left)
+        [center, above, left],
+
+    // (center)--> ** <---(left)
+    //             * <---(below)
+        [center, left, below],
+    ],
+    
 
     // ***
     //  * 
@@ -124,6 +135,7 @@ Tetro.prototype = {
     }
 }
 
+// TODO: Rename permutator to something more apt
 function Transformer(permutators, index) {
     this.index = index || 0;
     this.permutators = permutators || 
@@ -147,19 +159,18 @@ Transformer.prototype = {
     }
 }
 
+// Returns a function that is a
+// composition of the given two functions.
 function comp(f, g) {
     return function(x) {
         return f(g(x));
     }
 }
 
+// Returns a new function that applies the
+// given function twice on the argument.
 function twice(f) {
     return comp(f, f);
-}
-
-function rotate(dir) {
-    var i = directions.indexOf(dir);
-    return directions[(i+1) % 4];
 }
 
 function addPos(pos, dx, dy) {
@@ -168,6 +179,11 @@ function addPos(pos, dx, dy) {
         y: pos.y + dy
     }
 }
+
+//
+// Positional functions for computing
+// a new position relative to the given position
+// 
 
 function center(pos) {
     return pos;

@@ -1,19 +1,22 @@
 
 window.onload = load;
 
-var worldW = 17,
-    worldH = 21,
+// The world contains all the colored blocks
+// that is not moving
+var world = [],
+    worldW = 17, // width of the world
+    worldH = 21,// height of the world
 
+    // for rendering purposes only
     spacing = 3, // pixels
     blockSize = 20, // pixels
     
     canvas,
     context;
 
-var world,
-    level = 0,
-    ySpeed = 1,
-    baseSpeed = 30;
+var level = 0,
+    ySpeed = 1, // frames
+    baseSpeed = 30; // frames
 
 var sampleBlocks = [
     new Tetro("t", {x: 4, y: 4}),
@@ -24,11 +27,11 @@ var sampleBlocks = [
     new Tetro("s", {x: 9, y: 14}),
 ];
 
-var activePiece = null,
-    otherPieces = [],
+var activePiece = null, // the piece that the player control
+    otherPieces = [], // pieces that are released but has still not landed yet
     rotatePiece = false,
-    xMovement = 0,
-    yMovement = -1;
+    xMovement = 0, // the x-direction of the activePiece
+    yMovement = -1;// the y-direction of the activePiece
 
 
 function load() {
@@ -79,16 +82,22 @@ function start() {
     mozRequestAnimationFrame(gameLoop);
 }
 
+
+// Assigns a new tetromino to the active
+// piece with the same x-coordinate as the last one.
 function newActivePiece() {
     var y = worldH - 3,
         x = activePiece
         ? activePiece.pos.x
         : Number.toInteger(worldW / 2);
 
-    activePiece = tetroGenerator({x: x, y: y});
+    activePiece = generateTetro({x: x, y: y});
     adjustStartingPosition();
 }
 
+
+// Adjust the activePiece such that it
+// is not outside the world boundary.
 function adjustStartingPosition() {
     var dx = 1;
     if (activePiece.pos.x >= worldW / 2) {
@@ -103,6 +112,7 @@ function adjustStartingPosition() {
 
 
 var frame = 0;
+// TODO: Fix frame timing
 function gameLoop(t) {
     update(frame);
     draw();
@@ -120,6 +130,7 @@ function update(frame) {
         });
     }
 
+    // TODO: Piece over-rotates upon keypress
     if (frame % 5 == 0) {
         if (rotatePiece) {
             var rotatedPiece = activePiece.rotate();
@@ -149,6 +160,10 @@ function update(frame) {
     ascend(activePiece);
 }
 
+// Moves the active piece one row higher.
+// It adds the active piece to the world
+// and assigns a new one. Ends the game if
+// the world blocks reaches spawn point.
 function ascend() {
     if ((frame % (baseSpeed - ySpeed)) == 0) {
         var movedPiece = activePiece.move(0, yMovement);
@@ -165,6 +180,7 @@ function ascend() {
     }
 }
 
+// Stub: Just restart the game for the mean time
 function endGame() {
     initWorld();
 }
@@ -188,25 +204,6 @@ function renderSampleBlocks() {
     });
 }
 
-function huh() {
-    for (var x = 0; x < 1000; x++) {
-        for (var y = 0; y < 1000; y++) {
-            if ((x ^ y) % 3 == 0) {
-                drawBlock(context, {x: x, y: y} , "white");
-            }
-            if ((x ^ y) % 5 == 0) {
-                drawBlock(context, {x: x, y: y} , "blue");
-            }
-            if ((x ^ y) % 7 == 0) {
-                drawBlock(context, {x: x, y: y} , "orange");
-            }
-            if ((x ^ y) % 9 == 0) {
-                drawBlock(context, {x: x, y: y} , "red");
-            }
-        }
-    }
-}
-
 function clearScreen() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -226,13 +223,16 @@ function toPixelPos(pos) {
     }
 }
 
+
+// Adds the blocks of the pieces to the world
 function addToWorld(piece) {
     piece.getBlocks().forEach(function(block) {
         world[block.y][block.x] = piece.color;
     });
 }
 
-function tetroGenerator(pos) {
+// Creates a random tetromino among the available types
+function generateTetro(pos) {
     var index = Number.toInteger(Math.random() * typeNames.length),
         type = typeNames[index];
 
@@ -250,11 +250,6 @@ function handleKeyboard() {
             xMovement =  1;
         }
 
-        // rotate
-        if (e.keyCode == 74) {
-            yMovement = -1;
-        }
-
         if (e.keyCode == 68) {
             otherPieces.push(activePiece);
             newActivePiece();
@@ -270,12 +265,12 @@ function handleKeyboard() {
             xMovement = 0;
         } else if (e.keyCode == 75) {
             rotatePiece = false;
-        } else if (e.keyCode == 74) {
-            //yMovement =  0;
-        }
+        } 
     }
 }
 
+// Returns true if the piece in collision
+// with other blocks or is outside the world boundary
 function inCollision(piece) {
     return piece.getBlocks()
         .some(function(block) {
@@ -284,17 +279,18 @@ function inCollision(piece) {
         });
 }
 
+// Returns true if the piece is overlapping the world boundary
 function inBorderCollision(piece) {
     return piece.getBlocks().some(outOfBounds);
 }
 
+
+// Returns true if pos is outside the world boundery
 function outOfBounds(pos) {
     return pos.x < 0 ||
         pos.x >= worldW ||
         pos.y < 0 ||
         pos.y >= worldH;
 }
-
-
 
 
