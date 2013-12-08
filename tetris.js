@@ -83,6 +83,43 @@ function start() {
 }
 
 
+function clearBlocks(startRow) {
+    var row = startRow;
+    while (row >= 0 && isRowCompelete(row)) {
+        clearRow(row);
+        row--;
+    }
+    return startRow - row; // number of cleared rows
+}
+
+function clearRow(row) {
+    for (var i = 0;i < worldW; i++) {
+        world[row][i] = null;
+    }
+}
+
+function isRowCompelete(row) {
+    for (var x = 0;x < worldW; x++) {
+        if ( ! world[row][x]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function shiftBlocks(startRow) {
+    if (startRow < 1) {
+        return;
+    }
+
+    var lastRow = world[worldH - 1];
+    for (var y = startRow; y < worldH; y++) {
+        world[y-1] = world[y];
+    }
+    world[wordH - 1] = lastRow;
+}
+
+
 // Assigns a new tetromino to the active
 // piece with the same x-coordinate as the last one.
 function newActivePiece() {
@@ -292,5 +329,4 @@ function outOfBounds(pos) {
         pos.y < 0 ||
         pos.y >= worldH;
 }
-
 
