@@ -59,9 +59,12 @@ function initWorld() {
 
     addToWorld(new Tetro("i", {x: 1, y: 0}));
     addToWorld(new Tetro("i", {x: 5, y: 0}));
-    addToWorld(new Tetro("t", {x: 1, y: 1})
-            .rotate()
-            .rotate());
+    addToWorld(new Tetro("i", {x: 9, y: 0}));
+    addToWorld(new Tetro("i", {x: 13, y: 0}));
+    addToWorld(new Tetro("i", {x: 1, y: 1}));
+    addToWorld(new Tetro("i", {x: 5, y: 1}));
+    addToWorld(new Tetro("i", {x: 9, y: 1}));
+    addToWorld(new Tetro("i", {x: 13, y: 1}));
 }
 
 function drawWorld() {
@@ -89,7 +92,7 @@ function clearBlocks(startRow) {
         clearRow(row);
         row--;
     }
-    return startRow - row; // number of cleared rows
+    return startRow - row;
 }
 
 function clearRow(row) {
@@ -107,18 +110,12 @@ function isRowCompelete(row) {
     return true;
 }
 
-function shiftBlocks(startRow) {
-    if (startRow < 1) {
-        return;
+function shiftBlocks(n) {
+    for (var i = 0;i < n; i++) {
+        var row = world.shift();
+        world.push(row);
     }
-
-    var lastRow = world[worldH - 1];
-    for (var y = startRow; y < worldH; y++) {
-        world[y-1] = world[y];
-    }
-    world[wordH - 1] = lastRow;
 }
-
 
 // Assigns a new tetromino to the active
 // piece with the same x-coordinate as the last one.
@@ -190,6 +187,7 @@ function update(frame) {
             return movedPiece;
         } else {
             addToWorld(piece);
+            clearAndShiftBlocks(piece);
             return null;
         }
     }).filter(function(piece) { return !!piece; });
@@ -208,13 +206,33 @@ function ascend() {
             activePiece = movedPiece;
         } else {
             addToWorld(activePiece);
+            clearAndShiftBlocks(activePiece);
             newActivePiece();
-
             if (inCollision(activePiece)) {
                 endGame();
             }
         }
     }
+}
+
+function clearAndShiftBlocks(piece) {
+    var row = highestCompleteRow(piece);
+    if (row >= 0) {
+        var n = clearBlocks(row);
+        shiftBlocks(n);
+    }
+}
+
+function highestCompleteRow(piece) {
+    var blocks = piece.getBlocks(),
+        highestRow = -1;
+    for (var i = 0;i < blocks.length; i++) {
+        var row = blocks[i].y;
+        if (isRowCompelete(row) && row > highestRow) {
+            highestRow = row;
+        }
+    }
+    return highestRow;
 }
 
 // Stub: Just restart the game for the mean time
