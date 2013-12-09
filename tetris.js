@@ -25,6 +25,8 @@ var activePiece = null, // the piece that the player control
     yMovement = -1;// the y-direction of the activePiece
 
 
+var randomBlocks;
+
 function load() {
     initCanvas();
     initWorld();
@@ -71,6 +73,7 @@ function drawWorld() {
 
 function start() {
     newActivePiece();
+    randomBlocks = new RandomBlocks();
     activePiece.color = "white";
 
     mozRequestAnimationFrame(gameLoop);
@@ -176,6 +179,8 @@ function update(frame) {
             return null;
         }
     }).filter(function(piece) { return !!piece; });
+
+    randomBlocks.update();
 }
 
 function releaseActivePiece() {
@@ -329,4 +334,45 @@ function outOfBounds(pos) {
         pos.y < 0 ||
         pos.y >= worldH;
 }
+
+function RandomBlocks(world) {
+    this.frame = 1;
+    this.frequency = 300;
+}
+
+RandomBlocks.prototype = {
+    update: function() {
+        if (this.frame % this.frequency == 0) {
+            var coloredRow = createColoredRow();
+            world.unshift(coloredRow);
+            world.pop();
+            this.frame = 0;
+        }
+        this.frame++;
+    }
+}
+
+function createColoredRow() {
+    var row = Array(worldW),
+        pieceNames = Object.keys(colors);
+    
+    pieceNames.push(null);
+    pieceNames.unshift(null);
+
+    for (var i = 0;i < worldW; i++) {
+        var index = randomIndex(pieceNames.length),
+            pieceName = pieceNames[index];
+
+        console.log(">" + pieceName);
+        row[i] = colors[pieceName];
+    }
+
+    return row;
+}
+
+function randomIndex(length) {
+    return Number.toInteger(Math.random() * length);
+}
+
+
 
