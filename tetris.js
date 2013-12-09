@@ -248,17 +248,20 @@ function addToWorld(piece) {
 }
 
 // Creates a random tetromino among the available types
-function generateTetro(pos) {
-    var index = Number.toInteger(Math.random() * typeNames.length),
-        type = typeNames[index];
+function generateTetro(pos, random) {
+    if (random || !activePiece) {
+        var index = Number.toInteger(Math.random() * typeNames.length),
+            type = typeNames[index];
+        return new Tetro(type, pos);
+    } else {
+        var piece = activePiece;
+        return new Tetro(piece.type, piece.pos, piece.transformer);
+    }
 
-    return new Tetro(type, pos);
 }
 
 function handleKeyboard() {
     window.onkeydown = function(e) {
-        console.log("keycode -> " + e.keyCode);
-
         // horizontal movement
         if (e.keyCode == 72) {
             xMovement = -1;
