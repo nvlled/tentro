@@ -51,7 +51,7 @@ var permutatorMap = {
     // *
     l: [
         [center, left, right, aboveRight],
-        [center, above, below, belowLeft],
+        [center, above, below, belowRight],
         [center, left, right, belowLeft],
         [center, below, above, aboveLeft],
     ],
