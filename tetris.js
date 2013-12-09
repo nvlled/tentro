@@ -18,15 +18,6 @@ var level = 0,
     ySpeed = 1, // frames
     baseSpeed = 30; // frames
 
-var sampleBlocks = [
-    new Tetro("t", {x: 4, y: 4}),
-    new Tetro("j", {x: 4, y: 10}),
-    new Tetro("l", {x: 4, y: 15}),
-    new Tetro("i", {x: 9, y: 3}),
-    new Tetro("z", {x: 9, y: 9}),
-    new Tetro("s", {x: 9, y: 14}),
-];
-
 var activePiece = null, // the piece that the player control
     otherPieces = [], // pieces that are released but has still not landed yet
     rotatePiece = false,
@@ -156,14 +147,6 @@ function gameLoop(t) {
 }
 
 function update(frame) {
-    // rotate sample blocks
-
-    if (frame % 10 == 0) {
-        sampleBlocks = sampleBlocks.map(function(block) {
-            return block.rotate();
-        });
-    }
-
     // TODO: Piece over-rotates upon keypress
     if (frame % 5 == 0) {
         if (rotatePiece) {
@@ -243,7 +226,6 @@ function endGame() {
 function draw() {
     clearScreen();
     drawWorld();
-    //renderSampleBlocks();
     otherPieces.forEach(function(piece) {
         piece.draw(context, drawBlock);
     });
@@ -251,12 +233,6 @@ function draw() {
     if (activePiece) {
         activePiece.draw(context, drawBlock);
     }
-}
-
-function renderSampleBlocks() {
-    sampleBlocks.forEach(function(block) {
-        block.draw(context, drawBlock);
-    });
 }
 
 function clearScreen() {
