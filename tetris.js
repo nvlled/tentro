@@ -262,23 +262,42 @@ function generateTetro(pos, random) {
 
 function handleKeyboard() {
     window.onkeydown = function(e) {
-        // horizontal movement
-        if (e.keyCode == 72) {
-            xMovement = -1;
-        } else if (e.keyCode == 76) {
-            xMovement =  1;
-        }
+        console.log("keycode -> " + e.keyCode);
+        if (e.shiftKey) {
+            var pos = activePiece.pos;
+            if (e.keyCode == 73) {
+                activePiece = new Tetro("i", pos);
+            } else if (e.keyCode == 74) {
+                activePiece = new Tetro("j", pos);
+            } else if (e.keyCode == 76) {
+                activePiece = new Tetro("l", pos);
+            } else if (e.keyCode == 83) {
+                activePiece = new Tetro("s", pos);
+            } else if (e.keyCode == 90) {
+                activePiece = new Tetro("z", pos);
+            } else if (e.keyCode == 79) {
+                activePiece = new Tetro("o", pos);
+            } else if (e.keyCode == 84) {
+                activePiece = new Tetro("t", pos);
+            }
+        } else {
+            // horizontal movement
+            if (e.keyCode == 72) {
+                xMovement = -1;
+            } else if (e.keyCode == 76) {
+                xMovement =  1;
+            }
 
-        if (e.keyCode == 68) {
-            releaseActivePiece();
-        }
+            if (e.keyCode == 68) {
+                releaseActivePiece();
+            }
 
-        if (e.keyCode == 75) {
-            rotatePiece = true;
+            if (e.keyCode == 75) {
+                rotatePiece = true;
+            }
         }
     }
     window.onkeyup = function(e) {
-        //console.log("keycode -> " + e.keyCode);
         if (e.keyCode == 72 || e.keyCode == 76) {
             xMovement = 0;
         } else if (e.keyCode == 75) {
