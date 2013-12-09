@@ -101,11 +101,13 @@ function isRowCompelete(row) {
     return true;
 }
 
-function shiftBlocks(n) {
+function shiftBlocks(row, n) {
+    head = world.splice(0, row - n + 1);
     for (var i = 0;i < n; i++) {
         var row = world.shift();
         world.push(row);
     }
+    world.unshift.apply(world, head);
 }
 
 // Assigns a new tetromino to the active
@@ -202,7 +204,7 @@ function clearAndShiftBlocks(piece) {
     var row = highestCompleteRow(piece);
     if (row >= 0) {
         var n = clearBlocks(row);
-        shiftBlocks(n);
+        shiftBlocks(row, n);
     }
 }
 

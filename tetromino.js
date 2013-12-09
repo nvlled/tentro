@@ -1,5 +1,7 @@
 
 // I only used this for random generation of new tetrominos.
+// Err... Actually, I could've have just enumerated the keys
+// of the permutatorMap.
 var typeNames = ["t", "j", "i", "o", "s", "z"];
 
 // Not exactly the best (and correct) implementation,
