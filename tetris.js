@@ -176,28 +176,11 @@ function update(frame) {
             return null;
         }
     }).filter(function(piece) { return !!piece; });
-
-    ascend(activePiece);
 }
 
-// Moves the active piece one row higher.
-// It adds the active piece to the world
-// and assigns a new one. Ends the game if
-// the world blocks reaches spawn point.
-function ascend() {
-    if ((frame % (baseSpeed - ySpeed)) == 0) {
-        var movedPiece = activePiece.move(0, yMovement);
-        if ( ! inCollision(movedPiece)) {
-            activePiece = movedPiece;
-        } else {
-            addToWorld(activePiece);
-            clearAndShiftBlocks(activePiece);
-            newActivePiece();
-            if (inCollision(activePiece)) {
-                endGame();
-            }
-        }
-    }
+function releaseActivePiece() {
+    otherPieces.push(activePiece);
+    newActivePiece();
 }
 
 function clearAndShiftBlocks(piece) {
@@ -284,8 +267,7 @@ function handleKeyboard() {
         }
 
         if (e.keyCode == 68) {
-            otherPieces.push(activePiece);
-            newActivePiece();
+            releaseActivePiece();
         }
 
         if (e.keyCode == 75) {
