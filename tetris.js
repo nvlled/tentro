@@ -8,15 +8,27 @@ var world = [],
     worldH = 21,// height of the world
 
     // for rendering purposes only
-    spacing = 3, // pixels
+    spacing = 2, // pixels
     blockSize = 20, // pixels
     
     canvas,
     context;
 
-var level = 0,
-    ySpeed = 1, // frames
-    baseSpeed = 30; // frames
+var level = 0;
+var clearedRows = 0;
+
+var levels = [
+    { speed: 50, bgcolor: "#111" },
+    { speed: 45, bgcolor: "#121" },
+    { speed: 40, bgcolor: "#122" },
+    { speed: 35, bgcolor: "#211" },
+    { speed: 30, bgcolor: "#313" },
+    { speed: 25, bgcolor: "#311" },
+    { speed: 20, bgcolor: "#113" },
+    { speed: 15, bgcolor: "#333" },
+    { speed: 10, bgcolor: "#511" },
+    { speed:  5, bgcolor: "#551" },
+]
 
 var activePiece = null, // the piece that the player control
     otherPieces = [], // pieces that are released but has still not landed yet
@@ -149,7 +161,7 @@ function gameLoop(t) {
 
 function update(frame) {
     // TODO: Piece over-rotates upon keypress
-    if (frame % 5 == 0) {
+    if (frame % 4 == 0) {
         if (rotatePiece) {
             var rotatedPiece = activePiece.rotate();
             if ( ! inCollision(rotatedPiece)) {
@@ -171,12 +183,22 @@ function update(frame) {
             return movedPiece;
         } else {
             addToWorld(piece);
-            clearAndShiftBlocks(piece);
+            var nrows = clearAndShiftBlocks(piece);
+            clearedRows += nrows;
             return null;
         }
     }).filter(function(piece) { return !!piece; });
 
+    if (nextLevel()) {
+        level++;
+        clearedRows = 0;
+    }
+
     ascend(activePiece);
+}
+
+function nextLevel() {
+    return clearedRows >= 5;
 }
 
 // Moves the active piece one row higher.
@@ -184,7 +206,8 @@ function update(frame) {
 // and assigns a new one. Ends the game if
 // the world blocks reaches spawn point.
 function ascend() {
-    if ((frame % (baseSpeed - ySpeed)) == 0) {
+    //if ((frame % (baseSpeed - ySpeed)) == 0) {
+    if ((frame % levels[level].speed) == 0) {
         var movedPiece = activePiece.move(0, yMovement);
         if ( ! inCollision(movedPiece)) {
             activePiece = movedPiece;
@@ -201,10 +224,12 @@ function ascend() {
 
 function clearAndShiftBlocks(piece) {
     var row = highestCompleteRow(piece);
+    var n = 0;
     if (row >= 0) {
-        var n = clearBlocks(row);
+        n = clearBlocks(row);
         shiftBlocks(row, n);
     }
+    return n;
 }
 
 function highestCompleteRow(piece) {
@@ -234,10 +259,14 @@ function draw() {
     if (activePiece) {
         activePiece.draw(context, drawBlock);
     }
+
+    context.fillStyle = "white";
+    context.fillText("level " + (level+1), 10, (worldH) * (spacing + blockSize));
 }
 
 function clearScreen() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = levels[level].bgcolor;
+    context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawBlock(ctx, pos, style) {
@@ -259,7 +288,8 @@ function toPixelPos(pos) {
 // Adds the blocks of the pieces to the world
 function addToWorld(piece) {
     piece.getBlocks().forEach(function(block) {
-        world[block.y][block.x] = piece.color;
+        if (world[block.y])
+            world[block.y][block.x] = piece.color;
     });
 }
 
@@ -273,7 +303,6 @@ function generateTetro(pos) {
 
 function handleKeyboard() {
     window.onkeydown = function(e) {
-        console.log("keycode -> " + e.keyCode);
 
         // horizontal movement
         if (e.keyCode == 72) {
