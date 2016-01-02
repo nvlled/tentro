@@ -116,7 +116,7 @@ function newActivePiece() {
     var y = worldH - 3,
         x = activePiece
         ? activePiece.pos.x
-        : Number.toInteger(worldW / 2);
+        : parseInt(worldW / 2);
 
     activePiece = generateTetro({x: x, y: y});
     adjustStartingPosition();
@@ -266,7 +266,7 @@ function addToWorld(piece) {
 
 // Creates a random tetromino among the available types
 function generateTetro(pos) {
-    var index = Number.toInteger(Math.random() * typeNames.length),
+    var index = parseInt(Math.random() * typeNames.length),
         type = typeNames[index];
 
     return new Tetro(type, pos);

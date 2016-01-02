@@ -141,7 +141,7 @@ Tetro.prototype = {
 function Transformer(permutators, index) {
     this.index = index || 0;
     this.permutators = permutators || 
-        [center, center, center, center];
+        [[center, center, center, center]];
 }
 
 Transformer.prototype = {
