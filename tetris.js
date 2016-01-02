@@ -73,7 +73,7 @@ function start() {
     newActivePiece();
     activePiece.color = "white";
 
-    mozRequestAnimationFrame(gameLoop);
+    requestAnimationFrame(gameLoop);
 }
 
 
@@ -145,7 +145,7 @@ function gameLoop(t) {
     draw();
 
     frame++;
-    mozRequestAnimationFrame(gameLoop);
+    requestAnimationFrame(gameLoop);
 }
 
 function update(frame) {
