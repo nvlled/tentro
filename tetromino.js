@@ -4,6 +4,11 @@
 // of the permutatorMap.
 var typeNames = ["t", "j", "i", "o", "s", "z"];
 
+function randomTypeName() {
+    var n = Math.floor(typeNames.length*Math.random());
+    return  typeNames[n];
+}
+
 // Not exactly the best (and correct) implementation,
 // but at least I tried some different approach.
 var permutatorMap = {

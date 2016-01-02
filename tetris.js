@@ -48,14 +48,13 @@ function initWorld() {
         world[y] = new Array(worldW);
     }
 
-    addToWorld(new Tetro("i", {x: 1, y: 0}));
-    addToWorld(new Tetro("i", {x: 5, y: 0}));
-    addToWorld(new Tetro("i", {x: 9, y: 0}));
-    addToWorld(new Tetro("i", {x: 13, y: 0}));
-    addToWorld(new Tetro("i", {x: 1, y: 1}));
-    addToWorld(new Tetro("i", {x: 5, y: 1}));
-    addToWorld(new Tetro("i", {x: 9, y: 1}));
-    addToWorld(new Tetro("i", {x: 13, y: 1}));
+    for (var y = 0; y < 2; y++) {
+        for (var x = 0; x < worldW; x+=2) {
+            var name = randomTypeName();
+            var t = new Tetro(name, {x: x, y: y});
+            addToWorld(t);
+        }
+    }
 }
 
 function drawWorld() {
