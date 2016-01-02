@@ -16,6 +16,8 @@ var world = [],
 
 var level = 0;
 var clearedRows = 0;
+var isGameOver = false;
+var restartGame = false;
 
 var levels = [
     { speed: 50, bgcolor: "#111" },
@@ -67,6 +69,11 @@ function initWorld() {
             addToWorld(t);
         }
     }
+    isGameOver = false;
+    restartGame = false;
+    level = 0;
+    clearedRows = 0;
+    newActivePiece();
 }
 
 function drawWorld() {
@@ -160,6 +167,13 @@ function gameLoop(t) {
 }
 
 function update(frame) {
+    if (restartGame) {
+        initWorld();
+        return;
+    }
+    if (isGameOver)
+       return;
+
     // TODO: Piece over-rotates upon keypress
     if (frame % 4 == 0) {
         if (rotatePiece) {
@@ -246,7 +260,8 @@ function highestCompleteRow(piece) {
 
 // Stub: Just restart the game for the mean time
 function endGame() {
-    initWorld();
+    isGameOver = true;
+    //initWorld();
 }
 
 function draw() {
@@ -261,7 +276,12 @@ function draw() {
     }
 
     context.fillStyle = "white";
-    context.fillText("level " + (level+1), 10, (worldH) * (spacing + blockSize));
+    var x = 10;
+    var y = (worldH) * (spacing + blockSize);
+    if (isGameOver)
+        context.fillText("game over <press any key>", x, y);
+    else
+        context.fillText("level " + (level+1), x, y);
 }
 
 function clearScreen() {
@@ -303,6 +323,9 @@ function generateTetro(pos) {
 
 function handleKeyboard() {
     window.onkeydown = function(e) {
+        if (isGameOver) {
+            restartGame = true;
+        }
 
         // horizontal movement
         if (e.keyCode == 72) {
