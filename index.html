@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+    <meta charset="utf-8" />
+    <title>Tentro</title>
     <script type="text/javascript" src="tetromino.js"></script>
     <script type="text/javascript" src="tetris.js"></script>
     <style>
@@ -13,12 +13,33 @@
             width: 600px;
             margin: 0 auto;
         }
+        #buttons :first-child {
+            visibility: hidden;
+        }
+        #buttons {
+            margin-left: 90px;
+        }
+        #buttons > * {
+            padding: 2px 9px;
+            margin: 1px;
+        }
     </style>
 </head>
 <body>
 <div id="wrapper">
+    <h1>Tentro</h1>
+    <p>a barely working tetris imitation</p>
     <canvas>
     </canvas>
+
+    <div id="buttons">
+        <button class="">←</button>
+        <button class="up">↑</button><br>
+        <button class="left">←</button>
+        <button class="down">↓</button>
+        <button class="right">→</button>
+    </div>
+
     <h1>Controls</h1>
     <ul>
         <li>h - move left</li>

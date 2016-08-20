@@ -10,7 +10,7 @@ var world = [],
     // for rendering purposes only
     spacing = 2, // pixels
     blockSize = 20, // pixels
-    
+
     canvas,
     context;
 
@@ -43,6 +43,7 @@ function load() {
     initCanvas();
     initWorld();
     handleKeyboard();
+    handleButtons();
 
     start();
 }
@@ -190,7 +191,7 @@ function update(frame) {
             }
         }
     }
-    
+
     otherPieces = otherPieces.map(function(piece) {
         var movedPiece = piece.move(0, yMovement);
         if ( ! inCollision(movedPiece)) {
@@ -349,7 +350,29 @@ function handleKeyboard() {
             xMovement = 0;
         } else if (e.keyCode == 75) {
             rotatePiece = false;
-        } 
+        }
+    }
+}
+
+function handleButtons() {
+    var sel = function(q) {
+        return document.querySelector(q);
+    }
+    sel(".up").onclick = function() {
+        otherPieces.push(activePiece);
+        newActivePiece();
+    }
+    sel(".down").onclick = function() {
+        rotatePiece = true;
+        setTimeout(function() { rotatePiece = false }, 60);
+    }
+    sel(".left").onclick = function() {
+        xMovement = -1;
+        setTimeout(function() { xMovement = 0}, 60);
+    }
+    sel(".right").onclick = function() {
+        xMovement = 1;
+        setTimeout(function() { xMovement = 0}, 60);
     }
 }
 
@@ -376,4 +399,5 @@ function outOfBounds(pos) {
         pos.y < 0 ||
         pos.y >= worldH;
 }
+
 
